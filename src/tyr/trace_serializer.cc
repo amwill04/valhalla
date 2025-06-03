@@ -228,6 +228,13 @@ void serialize_edges(const AttributesController& controller,
         }
         writer.end_array();
       }
+      if (edge.name_size() > 0) {
+        writer.start_array("is_route_number");
+        for (const auto& name : edge.name()) {
+          writer(name.is_route_number());
+        }
+        writer.end_array();
+      }
       if (edge.traffic_segment().size() > 0) {
         writer.start_array("traffic_segments");
         for (const auto& segment : edge.traffic_segment()) {
