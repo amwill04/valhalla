@@ -20,10 +20,18 @@ json::MapPtr bike_network_json(uint8_t mask) {
   });
 }
 
-json::ArrayPtr names_json(const std::vector<std::string>& names) {
+json::ArrayPtr names_json(const std::vector<std::pair<std::string, bool>>& names) {
   auto a = json::array({});
   for (const auto& n : names) {
-    a->push_back(n);
+    a->push_back(n.first);
+  }
+  return a;
+}
+
+json::ArrayPtr is_route_number_json(const std::vector<std::pair<std::string, bool>>& names) {
+  auto a = json::array({});
+  for (const auto& n : names) {
+    a->push_back(n.second);
   }
   return a;
 }
@@ -516,12 +524,16 @@ std::vector<std::string> EdgeInfo::level_ref() const {
 }
 
 json::MapPtr EdgeInfo::json() const {
+  auto edge_names = GetNames(true);
+
   json::MapPtr edge_info = json::map({
       {"way_id", static_cast<uint64_t>(wayid())},
       {"bike_network", bike_network_json(bike_network())},
-      {"names", names_json(GetNames())},
+      {"names", names_json(edge_names)},
+      {"is_route_number", is_route_number_json(edge_names)},
       {"shape", midgard::encode(shape())},
   });
+
   // add the mean_elevation depending on its validity
   const auto elev = mean_elevation();
   if (elev == kNoElevationData) {
