@@ -222,16 +222,32 @@ void serialize_edges(const AttributesController& controller,
       }
       // TODO: do we want to output 'is_route_number'?
       if (edge.name_size() > 0) {
+        bool ref_found = false;
         writer.start_array("names");
         for (const auto& name : edge.name()) {
-          writer(name.value());
+          if (name.is_route_number()) {
+            if (!ref_found) {
+              writer(name.value());
+              ref_found = true;
+            }
+          } else {
+            writer(name.value());
+          }
         }
         writer.end_array();
       }
       if (edge.name_size() > 0) {
+        bool ref_found = false;
         writer.start_array("is_route_number");
         for (const auto& name : edge.name()) {
-          writer(name.is_route_number());
+          if (name.is_route_number()) {
+            if (!ref_found) {
+              writer(true);
+              ref_found = true;
+            }
+          } else {
+            writer(false);
+          }
         }
         writer.end_array();
       }

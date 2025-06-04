@@ -22,16 +22,32 @@ json::MapPtr bike_network_json(uint8_t mask) {
 
 json::ArrayPtr names_json(const std::vector<std::pair<std::string, bool>>& names) {
   auto a = json::array({});
-  for (const auto& n : names) {
-    a->push_back(n.first);
+  bool ref_found = false;
+  for (const auto& [fst, snd] : names) {
+    if (snd) {
+      if (!ref_found) {
+        a->push_back(fst);
+        ref_found = true;
+      }
+    } else {
+      a->push_back(fst);
+    }
   }
   return a;
 }
 
 json::ArrayPtr is_route_number_json(const std::vector<std::pair<std::string, bool>>& names) {
   auto a = json::array({});
-  for (const auto& n : names) {
-    a->push_back(n.second);
+  bool ref_found = false;
+  for (const auto& [fst, snd] : names) {
+    if (snd) {
+      if (!ref_found) {
+        a->push_back(true);
+        ref_found = true;
+      }
+    } else {
+      a->push_back(false);
+    }
   }
   return a;
 }
